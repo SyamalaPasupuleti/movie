@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MovieRepository extends MongoRepository<Movie, Long> {
-    List<Movie> findByMovieNameContaining(String name);
 
-    List<Movie> findByTitleContainingIgnoreCase(String title);
 }

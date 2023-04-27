@@ -31,8 +31,5 @@ public class MovieController {
         movieRepository.deleteById(id);
     }
 
-    public List<Movie> searchMoviesByName(String name) {
-        return movieRepository.findByMovieNameContaining(name);
-    }
 
 }
