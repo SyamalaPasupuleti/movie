@@ -2,34 +2,64 @@ package com.project.movie.controller;
 
 import com.project.movie.entity.Movie;
 import com.project.movie.repository.MovieRepository;
+import com.project.movie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@RestController("/movie")
 public class MovieController {
 
     @Autowired
-    private MovieRepository movieRepository;
+    MovieService movieService;
 
+
+    @GetMapping
     public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
+        return movieService.getAllMovies();
     }
 
-    public Optional<Movie> getMovieById(Long id) {
-        return movieRepository.findById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Movie> getMovieById(@PathVariable("id") Long id) {
+        Optional<Movie> movie = movieService.getMovieById(id);
+        if (movie.isPresent()) {
+            return ResponseEntity.ok(movie.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    public Movie createMovie(Movie movie) {
-        return movieRepository.save(movie);
+    @PostMapping
+    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
+        Movie createdMovie = movieService.createMovie(movie);
+        return ResponseEntity.created(URI.create("/movies/" + createdMovie.toString())).body(createdMovie);
     }
 
-    public void deleteMovieById(Long id) {
-        movieRepository.deleteById(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMovie(@PathVariable("id") Long id) {
+        Optional<Movie> movie = movieService.getMovieById(id);
+        if (movie.isPresent()) {
+            movieService.deleteMovieById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+    /*@GetMapping("/search/{title}")
+    public List<Movie> getMoviesByTitle(@PathVariable("title") String title) {
+        List<Movie> movies = movieRepository.findByTitleContainingIgnoreCase(title);
+        if (movies.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return movies;
+        }
+    }*/
 
 
 }

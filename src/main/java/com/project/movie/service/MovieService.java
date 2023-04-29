@@ -17,45 +17,20 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
-    @GetMapping
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Movie> getMovieById(@PathVariable("id") Long id) {
-        Optional<Movie> movie = movieRepository.findById(id);
-        if (movie.isPresent()) {
-            return ResponseEntity.ok(movie.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Optional<Movie> getMovieById(Long id) {
+        return movieRepository.findById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
-        Movie createdMovie = movieRepository.save(movie);
-        return ResponseEntity.created(URI.create("/movies/" + createdMovie.toString())).body(createdMovie);
+    public Movie createMovie(Movie movie) {
+        return movieRepository.save(movie);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMovie(@PathVariable("id") Long id) {
-        Optional<Movie> movie = movieRepository.findById(id);
-        if (movie.isPresent()) {
-            movieRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void deleteMovieById(Long id) {
+        movieRepository.deleteById(id);
     }
 
-    /*@GetMapping("/search/{title}")
-    public List<Movie> getMoviesByTitle(@PathVariable("title") String title) {
-        List<Movie> movies = movieRepository.findByTitleContainingIgnoreCase(title);
-        if (movies.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return movies;
-        }
-    }*/
 }
